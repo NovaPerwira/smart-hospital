@@ -123,5 +123,38 @@ class BookingController extends Controller
 
         return response()->json(['slots' => $availableSlots]);
     }
+    /**
+     * Look up a booking by booking code (for patient portal).
+     */
+    public function lookup(Request $request)
+    {
+        $request->validate([
+            'code' => ['required', 'string', 'max:20'],
+        ]);
+
+        $booking = Booking::with(['doctor', 'treatment', 'slot'])
+            ->where('booking_code', strtoupper(trim($request->code)))
+            ->first();
+
+        if (!$booking) {
+            return response()->json([
+                'found' => false,
+                'message' => 'Booking not found. Please check your booking code.',
+            ]);
+        }
+
+        return response()->json([
+            'found' => true,
+            'booking_code' => $booking->booking_code,
+            'patient_name' => $booking->patient_name,
+            'booking_date' => $booking->booking_date->format('d M Y'),
+            'treatment' => $booking->treatment?->name ?? '—',
+            'doctor' => $booking->doctor?->name ?? '—',
+            'time' => $booking->slot
+                ? \Carbon\Carbon::parse($booking->slot->start_time)->format('H:i') . ' – ' . \Carbon\Carbon::parse($booking->slot->end_time)->format('H:i')
+                : '—',
+            'status' => $booking->status,
+        ]);
+    }
 }
 

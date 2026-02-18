@@ -28,11 +28,11 @@ class AdminController extends Controller
         $today = now()->toDateString();
 
         $stats = [
-            'total_today' => Booking::where('booking_date', $today)->count(),
-            'confirmed' => Booking::where('booking_date', $today)->where('status', 'confirmed')->count(),
-            'completed' => Booking::where('booking_date', $today)->where('status', 'completed')->count(),
-            'no_show' => Booking::where('booking_date', $today)->where('status', 'no_show')->count(),
-            'cancelled' => Booking::where('booking_date', $today)->where('status', 'cancelled')->count(),
+            'total_today' => Booking::whereDate('booking_date', $today)->count(),
+            'confirmed' => Booking::whereDate('booking_date', $today)->where('status', 'confirmed')->count(),
+            'completed' => Booking::whereDate('booking_date', $today)->where('status', 'completed')->count(),
+            'no_show' => Booking::whereDate('booking_date', $today)->where('status', 'no_show')->count(),
+            'cancelled' => Booking::whereDate('booking_date', $today)->where('status', 'cancelled')->count(),
             'revenue_today' => Payment::whereDate('paid_at', $today)->where('status', 'paid')->sum('amount'),
             'pending_followups' => ScheduledFollowUp::where('status', 'pending')->count(),
             'notifications_sent' => NotificationLog::whereDate('created_at', $today)->count(),
@@ -43,6 +43,7 @@ class AdminController extends Controller
             ->latest()
             ->take(8)
             ->get();
+
 
         $upcomingFollowUps = ScheduledFollowUp::with(['booking'])
             ->where('status', 'pending')

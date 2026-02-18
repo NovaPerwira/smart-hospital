@@ -2,9 +2,24 @@
 @section('title', 'Dashboard')
 
 @section('content')
+    {{-- Auto-refresh every 60 seconds --}}
+    <meta http-equiv="refresh" content="60">
+
     <div class="space-y-6">
 
-        {{-- ── KPI STAT CARDS ──────────────────────────────────────────────── --}}
+        {{-- ── HEADER WITH REFRESH ────────────────────────────────────────────── --}}
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-xl font-bold text-white">📊 Dashboard</h1>
+                <p class="text-xs text-gray-500 mt-0.5">Last updated: {{ now()->format('H:i:s') }} · Auto-refreshes every 60s</p>
+            </div>
+            <a href="{{ route('admin.dashboard') }}"
+               class="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded-xl transition-colors">
+                🔄 Refresh
+            </a>
+        </div>
+
+
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
 
             {{-- Total Today --}}
